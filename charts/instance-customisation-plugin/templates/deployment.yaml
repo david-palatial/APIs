@@ -4,13 +4,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sps-instance-customisation-plugin
-  namespace: {{ .Release.Namespace }}
+  namespace: tenant-palatial-platform
 spec:
   clusterIP: None
   ports:
-  - port: {{ .Values.port }}
+  - port: 35774
     protocol: TCP
-    targetPort: {{ .Values.port }}
+    targetPort: 35774
   selector:
     app.kubernetes.io/name: sps-instance-customisation-plugin
 
@@ -24,7 +24,7 @@ metadata:
   labels:
     app.kubernetes.io/name: sps-instance-customisation-plugin
   name: sps-instance-customisation-plugin
-  namespace: {{ .Release.Namespace }}
+  namespace: tenant-palatial-platform
 spec:
   replicas: 1
   selector:
@@ -35,12 +35,10 @@ spec:
       labels:
         app.kubernetes.io/name: sps-instance-customisation-plugin
     spec:
-      tolerations:
-        - operator: "Exists"
       containers:
-      - image: {{ .Values.image }}
+      - image: docker.io/dgodfrey206/instance-customisation-plugin
         imagePullPolicy: Always
         name: sps-instance-customisation-plugin
         ports:
-        - containerPort: {{ .Values.port }}
+        - containerPort: 35774
 ---

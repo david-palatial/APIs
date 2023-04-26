@@ -7,7 +7,10 @@ RUN mkdir instance-customisation-plugin
 WORKDIR /instance-customisation-plugin
 
 # Copy the binary over. This requires that the binary has already been built
-COPY bin/linux/amd64/instance-customisation-plugin ./server
+COPY bin/instance-customisation-plugin ./server
+
+# Copy kubeconfig over so that the server can access the cluster
+COPY config .
 
 # Set an entry point that runs when this container is launched
 ENTRYPOINT [ "/instance-customisation-plugin/server" ]

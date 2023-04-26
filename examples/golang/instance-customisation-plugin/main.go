@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-
 	"github.com/scalablepixelstreaming/apis/pkg/customisation"
 	"google.golang.org/grpc"
 )
@@ -15,7 +14,7 @@ import (
 // The default port for the custom plugin for kubernetes to listen on
 // This port is important as it will be the port you refer to when adding this as a plugin
 // to the Scalable Pixel Streaming Application (e.g. my-plugin.default.svc.cluster.local:55774)
-const PLUGIN_PORT = 55774
+const PLUGIN_PORT = 35774
 
 // Implement the generated gRPC plugin server
 type InstanceCustomisationPluginServer struct {
@@ -60,7 +59,7 @@ func (server *InstanceCustomisationPluginServer) UpdateRuntimeOptions(ctx contex
 	})
 
 	// Here is where you might do something with loading a map that was selected by the user
-	log.Println("Here is where we might load the following map: " + options.Map)
+	/*log.Println("Here is where we might load the following map: " + options.Map)
 
 	// Appending a custom argument to the Unreal application at runtime
 	req.RuntimeOptions.Args = append(req.RuntimeOptions.Args, "-MyCustomArgument")
@@ -70,20 +69,19 @@ func (server *InstanceCustomisationPluginServer) UpdateRuntimeOptions(ctx contex
 		req.RuntimeOptions.EnvironmentVariables = map[string]string{}
 	}
 	req.RuntimeOptions.EnvironmentVariables["MyCustomEnvVar"] = "MyCustomValue"
-
+*/
 	// Changing the resolution
-	req.RuntimeOptions.Resolution.X = 1280
+	/*req.RuntimeOptions.Resolution.X = 1280
 	req.RuntimeOptions.Resolution.Y = 720
 
 	// Setting the max FPS
-	req.RuntimeOptions.PixelStreaming.WebRTC.MaxFPS = 30
+	req.RuntimeOptions.PixelStreaming.WebRTC.MaxFPS = 30*/
 
 	// return the gRPC call with updated runtime options
 	return &customisation.UpdateRuntimeOptionsResponse{RuntimeOptions: req.RuntimeOptions}, nil
 }
 
 func main() {
-
 	// Attempt to listen on the default port number for Instance Customisation Plugins
 	sock, err := net.Listen("tcp", fmt.Sprintf(":%d", PLUGIN_PORT))
 	if err != nil {
@@ -92,10 +90,15 @@ func main() {
 
 	// Create our gRPC server and start serving requests
 	log.Println("Listening on " + fmt.Sprint(PLUGIN_PORT))
+	log.Println("i'm waiting...")
 	grpcServer := grpc.NewServer()
 	customisation.RegisterInstanceCustomisationPluginServer(grpcServer, &InstanceCustomisationPluginServer{})
 
+	log.Println("grpcServer.Serve(sock)")
 	if err := grpcServer.Serve(sock); err != nil {
+		log.Println("Failed: ")
 		log.Fatalln(err.Error())
 	}
+
+	log.Println("Connection established")
 }
